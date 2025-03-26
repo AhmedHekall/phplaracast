@@ -1,0 +1,32 @@
+
+<Files ~ "\.(htaccess|env|git|config|sql|json)$">
+    Require all denied
+</Files>
+
+# تفعيل mod_rewrite
+RewriteEngine On
+
+# إعادة توجيه الطلبات الفارغة إلى index.php داخل public
+RewriteCond %{REQUEST_URI} ^/$
+RewriteRule ^$ /public/index.php [L,QSA]
+
+# السماح بالوصول إلى الملفات داخل public (مثل CSS, JS, Images)
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^public/ - [L]
+
+# منع الوصول إلى أي ملفات PHP أو ملفات حساسة خارج public
+RewriteCond %{REQUEST_FILENAME} !^/public/
+RewriteCond %{REQUEST_FILENAME} \.php$
+RewriteRule ^ - [F,L]
+
+# إعادة توجيه أي طلب غير موجود داخل public إلى public/index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ /public/index.php [L,QSA]
+
+# حماية من الوصول إلى الملفات الحساسة داخل public
+<FilesMatch "\.(htaccess|env|git|config|sql|json)$">
+    Require all denied
+</FilesMatch>
+
