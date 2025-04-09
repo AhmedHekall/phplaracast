@@ -2,11 +2,15 @@
 
 namespace Core;
 
+use Core\middelware\Auth;
+use Core\middelware\Guest;
+use Core\middelware\Middelware;
+
 class Router
 {
        protected $routes = [];
 
-       private function add($method, $uri, $controller)
+       private function add($method, $uri, $controller, $middelware = null)
        {
 
               // $this->routes[] =
@@ -20,7 +24,8 @@ class Router
 
 
 
-              $this->routes[] = compact('method', 'uri', 'controller');
+              $this->routes[] = compact('method', 'uri', 'controller', 'middelware');
+              return $this;
        }
        public function get($uri, $controller)
        {
@@ -36,7 +41,7 @@ class Router
               // ****************alternative solution**************
 
 
-              $this->add('GET', $uri, $controller);
+              return  $this->add('GET', $uri, $controller);
        }
        public function post($uri, $controller)
        {
@@ -51,7 +56,7 @@ class Router
               // ****************alternative solution**************
 
 
-              $this->add('POST', $uri, $controller);
+              return $this->add('POST', $uri, $controller);
        }
        public function delete($uri, $controller)
        {
@@ -67,7 +72,7 @@ class Router
               // ****************alternative solution**************
 
 
-              $this->add('DELETE', $uri, $controller);
+              return $this->add('DELETE', $uri, $controller);
        }
        public function patch($uri, $controller)
        {
@@ -83,7 +88,7 @@ class Router
               // ****************alternative solution**************
 
 
-              $this->add('PATCH', $uri, $controller);
+              return  $this->add('PATCH', $uri, $controller);
        }
        public function put($uri, $controller)
        {
@@ -99,9 +104,14 @@ class Router
               // ****************alternative solution**************
 
 
-              $this->add('PUT', $uri, $controller);
+              return $this->add('PUT', $uri, $controller);
        }
-
+       // example how make middelware
+       public function only($key)
+       {
+              $this->routes[array_key_last($this->routes)]['middelware'] = $key;
+              return $this;
+       }
 
 
        // run of routes  make requre route automatecly
@@ -110,7 +120,45 @@ class Router
               foreach ($this->routes as $route) {
                      // dd($this->routes);
                      if ($route['uri'] === $uri && $route['method'] === strtoupper($method)) {
-                            // dd($route);
+                            //apply the middelware
+                            // "Core\middelware\...."
+                            Middelware::resolve($route['middelware']);
+
+
+
+
+                            // if ($route['middelware']) {
+
+                            //        $middelware = Middelware::MAP[$route['middelware']];
+                            //        // "Core\middelware\...."
+                            //        (new $middelware)->handel();
+                            // }
+
+
+
+
+                            // if ($route['middelware'] === 'guest') {
+                            //        (new Guest)->handle();
+                            //        // if ($_SESSION['user'] ?? false) {
+                            //        //        header('location:/');
+                            //        //        exit();
+                            //        // }
+                            // }
+                            // if ($route['middelware'] === 'auth') {
+                            //        // if (!isset($_SESSION['user'])) {
+
+                            //        //        header('location:/');
+                            //        //        exit();
+                            //        // }
+                            //        // if (! ($_SESSION['user'] ?? false)) {
+                            //        //        header('location:/');
+                            //        //        exit();
+                            //        // }
+                            //        (new Auth)->handel();
+                            // }
+
+
+
 
                             return require base_path($route['controller']);
                      }
