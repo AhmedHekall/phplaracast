@@ -1,0 +1,29 @@
+<?php
+
+namespace Http\Forms;
+
+use Core\Validator;
+
+class LogForm
+{
+       protected $errors = [];
+       public function validate($email, $password)
+       {
+              if (! Validator::email($email)) {
+                     $this->errors['email'] = 'plase enter the valid email';
+              }
+              if (! Validator::string($password)) {
+                     $this->errors['password'] = 'plase provied avalid password';
+              }
+              return empty($this->errors);
+       }
+
+       public function errors()
+       {
+              return $this->errors;
+       }
+       public function error($field, $message)
+       {
+              $this->errors[$field] = $message;
+       }
+}
