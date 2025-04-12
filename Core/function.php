@@ -1,6 +1,7 @@
 <?php
 
 use Core\Response;
+use Core\Session;
 
 function abort($code = 404)
 {
@@ -56,4 +57,8 @@ function redirect(string $path)
 {
        header("location:{$path}");
        exit();
+}
+function old($key, $default = '')
+{
+       return Session::get('old')[$key] ?? $default;
 }
