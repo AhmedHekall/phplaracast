@@ -19,7 +19,8 @@ view('partials/head.php') ?>
                                    <div>
                                           <label for="email" class="block text-sm/6 font-medium text-gray-900">Email address</label>
                                           <div class="mt-2">
-                                                 <input type="text" value="<?= old('email') ?>" name="email" id="email" autocomplete="email" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+
+                                                 <input type="text" value="<?= (!empty(old('email'))) ? old('email') : Session::get('email') ?>" name="email" id="email" autocomplete="email" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
                                           </div>
                                    </div>
                                    <?php if (isset($errors['email'])) : ?>
@@ -39,7 +40,7 @@ view('partials/head.php') ?>
                                                  </div> -->
                                           </div>
                                           <?php if (isset($errors['password'])) : ?>
-                                                 <p class="text-red-400 text-xl mt-5"><?= $errors['password'] ?></p>
+                                                 <p> class="text-red-400 text-xl mt-5"><?= $errors['password'] ?></p>
                                           <?php endif; ?>
                                    </div>
 
