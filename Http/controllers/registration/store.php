@@ -1,57 +1,23 @@
 <?php
 
-use Core\App;
-use Core\Database;
-use Core\Validator;
+use Core\Registeration;
+use Core\Session;
+use Http\Forms\LogForm;
 
-$email = $_POST['email'];
-$password = $_POST['password'];
 
-//validate form inputs.
-$errors = [];
-if (! Validator::email($email)) {
+$form = LogForm::validate($attribute = [
+       'email' => $_POST['email'],
+       'password' => $_POST['password']
+]);
 
-       $errors['email'] = 'please provide a valid email address';
+$register = (new Registeration)->attempt($attribute['email'], $attribute['password']);
+// dd($register);
+
+if ($register) {
+
+       redirect('/');
 }
 
-if (!Validator::string($password, 7, 100)) {
-       $errors['password'] = 'please the password must be gretar than 7 and liss than 100 ';
-}
+Session::put('email', $attribute['email']);
 
-
-
-if (! empty($errors)) {
-       return view('registration/create.view.php', [
-              'errors' => $errors
-
-       ]);
-}
-
-
-
-$db = App::resolve(Database::class);
-//chick if acount is exists in db 
-$user = $db->query('SELECT * FROM users WHERE email=:email', [
-       ':email' => $email
-])->find();
-
-//if yes , redirect to login page
-if ($user) {
-       header('location:/');
-       exit();
-} else {
-       //if no , save one in data base , and log the user in and redirect
-       $db->query('INSERT INTO users (`email`,`password`) VALUES (:email , :password)', [
-              'email' => $email,
-              'password' => password_hash($password, PASSWORD_BCRYPT)
-       ]);
-       // $_SESSION['user'] = [
-       //        'email' => $email
-
-       // ];
-
-       login($user);
-
-       header('location:/');
-       exit();
-}
+redirect("/login");

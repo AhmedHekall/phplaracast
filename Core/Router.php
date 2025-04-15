@@ -165,6 +165,13 @@ class Router
               }
               $this->abort();
        }
+
+       public function previousUrl()
+       {
+              return $_SERVER['HTTP_REFERER'];
+       }
+
+
        // if not find  route show page_error
        private function abort($code = 404)
        {

@@ -2,20 +2,49 @@
 
 namespace Http\Forms;
 
+use Core\ValidationException;
 use Core\Validator;
 
 class LogForm
 {
+
+
        protected $errors = [];
-       public function validate($email, $password)
+
+
+       public function __construct(public array $attributes)
        {
-              if (! Validator::email($email)) {
+              if (! Validator::email($attributes['email'])) {
                      $this->errors['email'] = 'plase enter the valid email';
               }
-              if (! Validator::string($password)) {
+              if (! Validator::string($attributes['password'])) {
                      $this->errors['password'] = 'plase provied avalid password';
               }
-              return empty($this->errors);
+       }
+
+
+
+       public static function validate($attributes)
+       {
+              // $instance = new LogForm($attributes);
+              $instance = new static($attributes);
+
+              return $instance->faild() ? $instance->throw() : $instance;
+
+
+              // if ($instance->faild()) {
+              //     $instance->throw();  
+              // }
+              // return $instance;
+       }
+       public function throw()
+       {
+              return  ValidationException::throw($this->errors, $this->attributes);
+       }
+
+       public function faild()
+       {
+              return count($this->errors);
        }
 
        public function errors()
@@ -25,5 +54,6 @@ class LogForm
        public function error($field, $message)
        {
               $this->errors[$field] = $message;
+              return $this;
        }
 }

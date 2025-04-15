@@ -2,35 +2,22 @@
 
 
 use Core\Authenticator;
-use Core\Session;
+
 use Http\Forms\LogForm;
 
 
-$email = $_POST['email'];
-$password = $_POST['password'];
 
 
-//validation query inpyt
-$form = new LogForm;
-if ($form->validate($email, $password)) {
-       $auth = new Authenticator;
-       if ($auth->attempt($email, $password)) {
-              redirect('/');
-       }
-       $form->error('email', 'no matching acount found that for email address and not invalid pasword.');
-}
 
-
-// $_SESSION['_flash']['errors']=$form->errors();
-Session::flash('errors', $form->errors());
-Session::flash('old', [
-       'email' => $email
+$form = LogForm::validate($attribute = [
+       'email' => $_POST['email'],
+       'password' => $_POST['password']
 ]);
 
+$signIn = (new Authenticator)->attempt($attribute['email'], $attribute['password']);
 
-return redirect('/login');
+if (!$signIn) {
+       $form->error('email', 'No matching acount found for that email address and password .')->throw();
+}
 
-
-// return view('session/create.view.php', [
-//        'errors' => $form->errors()
-// ]);
+redirect('/');

@@ -55,6 +55,7 @@ function view($path, $attributes = [])
 // }
 function redirect(string $path)
 {
+
        header("location:{$path}");
        exit();
 }
